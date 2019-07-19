@@ -31,15 +31,15 @@ func main() {
 
 		var obj Sagashiter.SagashiterInterface
 		if strings.HasSuffix(f.Name(), ".ass") {
-			obj = Sagashiter.NewAssObj(content)
+			obj = Sagashiter.NewAssObj(content, f.Name())
 		} else if strings.HasSuffix(f.Name(), ".srt") {
 			//TODO
-			obj = Sagashiter.NewSrtObj(content)
+			obj = Sagashiter.NewSrtObj(content, f.Name())
 		}
 
 		timers := obj.Tansaku()
 		res := obj.IncreaseTime(timers, INC)
-		//TODO save method in interface
+		obj.Save()
 		//TODO change const on flags
 		fmt.Println(res)
 
