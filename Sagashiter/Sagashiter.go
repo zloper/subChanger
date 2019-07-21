@@ -35,7 +35,6 @@ func (obj *SagashiterStruct) Tansaku() []string {
 	return timers
 }
 
-//TODO .00 into .ass format
 func (obj *SagashiterStruct) IncreaseTime(timers []string, inc time.Duration) string {
 	for _, item := range timers {
 		layout := "15:04:05"
