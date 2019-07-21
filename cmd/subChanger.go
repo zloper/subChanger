@@ -10,13 +10,9 @@ import (
 	"time"
 )
 
-const (
-	INC = 10
-)
-
 var config struct {
-	InputDir string `long:"input"     description:"path to dir with original subs" env:"INPUT_DIR" default:"./"`
-	Increase int    `long:"increase"     description:"time to increase subs timing" env:"INCREASE" default:"1"`
+	InputDir string `long:"input"     description:"path to dir with original subs" env:"INPUT_DIR" default:"./input"`
+	Increase int64  `long:"increase"     description:"time to increase subs timing" env:"INCREASE" default:"1"`
 }
 
 func main() {
@@ -33,7 +29,6 @@ func main() {
 		fmt.Println(err)
 	}
 
-	fmt.Println("list", inputList)
 	for _, f := range inputList {
 		fb, _ := ioutil.ReadFile(config.InputDir + "/" + f.Name())
 		content := string(fb)
@@ -42,16 +37,16 @@ func main() {
 		if strings.HasSuffix(f.Name(), ".ass") {
 			obj = Sagashiter.NewAssObj(content, f.Name())
 		} else if strings.HasSuffix(f.Name(), ".srt") {
-			//TODO
 			obj = Sagashiter.NewSrtObj(content, f.Name())
 		}
-		//TODO incTime := config.Increase * time.Second
-		incTime := INC * time.Second
-		timers := obj.Tansaku()
-		res := obj.IncreaseTime(timers, incTime)
-		obj.Save()
-		//TODO change const on flags
-		fmt.Println(res)
+
+		if obj != nil {
+			incTime := time.Duration(config.Increase) * time.Second
+			timers := obj.Tansaku()
+			res := obj.IncreaseTime(timers, incTime)
+			obj.Save()
+			fmt.Println(res)
+		}
 
 	}
 

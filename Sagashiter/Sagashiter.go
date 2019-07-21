@@ -12,6 +12,7 @@ type SagashiterStruct struct {
 	Content     string
 	RegTemplate string
 	Name        string
+	IsAss       bool
 }
 
 type SagashiterInterface interface {
@@ -21,28 +22,33 @@ type SagashiterInterface interface {
 }
 
 func NewAssObj(content, name string) SagashiterInterface {
-	return &SagashiterStruct{Content: content, Name: name, RegTemplate: "\\d:\\d+:\\d+.\\d+"}
+	return &SagashiterStruct{Content: content, Name: name, IsAss: true, RegTemplate: `(\d:\d+:\d+)\.\d+`}
 }
 
 func NewSrtObj(str, name string) SagashiterInterface {
-	return &SagashiterStruct{Content: str, Name: name, RegTemplate: "none"}
+	return &SagashiterStruct{Content: str, Name: name, RegTemplate: "\\d+:\\d+:\\d+", IsAss: false}
 }
 
 func (obj *SagashiterStruct) Tansaku() []string {
-	r, _ := regexp.Compile(obj.RegTemplate)
+	r := regexp.MustCompile(obj.RegTemplate)
 	timers := r.FindAllString(obj.Content, -1)
 	return timers
 }
 
+//TODO .00 into .ass format
 func (obj *SagashiterStruct) IncreaseTime(timers []string, inc time.Duration) string {
 	for _, item := range timers {
-		layout := "15:04:05.00"
+		layout := "15:04:05"
 		newTime, err := time.Parse(layout, item)
 		if err != nil {
 			fmt.Println(err)
 		}
 		newTime = newTime.Add(inc)
 		timeToReplace := newTime.Format(layout)
+
+		if obj.IsAss {
+			timeToReplace = timeToReplace[1:]
+		}
 
 		obj.Content = strings.Replace(obj.Content, item, timeToReplace, -1)
 	}
