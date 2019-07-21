@@ -48,6 +48,7 @@ func (obj *SagashiterStruct) IncreaseTime(timers []string, inc time.Duration) st
 
 		if obj.IsAss {
 			timeToReplace = timeToReplace[1:]
+			item = strings.Split(item, ".")[0]
 		}
 
 		obj.Content = strings.Replace(obj.Content, item, timeToReplace, -1)
