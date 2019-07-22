@@ -18,6 +18,18 @@ Why read file? Why not string?
 00:01:39,345 --> 00:01:42,211
 Because I can!`
 
+func TestShort(t *testing.T) {
+	obj := Sagashiter.NewAssObj(assText, "someTestFile.ass")
+	timers := obj.Tansaku()
+	if !("0:00:08.77" == timers[0]) {
+		t.Error("wrong time get")
+	}
+	afterChange := obj.IncreaseTime(timers, time.Duration(55)*time.Second)
+	if !strings.Contains(afterChange, "01:03.77") {
+		t.Error("Wrong time in final result")
+	}
+}
+
 func TestAss(t *testing.T) {
 	res, err := Reader("fl.ass", assText)
 	if err != nil {
